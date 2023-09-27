@@ -66,16 +66,18 @@ const F8 = {
        * @param {string} code - Mã code
        */
       handleChange(element, event, code) {
+        const codes = code.split(';');
         // Element, gán sự kiện
         element.addEventListener(event, () => {
-          // Nối chuỗi với this.state để cập nhật lại state
-          const newCode = `this.state.${code}`;
-
-          // sử dụng hàm eval để chạy đoạn code bằng String
-          eval(newCode);
-
-          // Xử lý việc render lại component bằng đoạn code viết trong giá trị attr
-          this.handleReRender(code);
+          codes.forEach((code) => {
+            code = code.trim();
+            // Nối chuỗi với this.state để cập nhật lại state
+            const newCode = `this.state.${code};`;
+            // sử dụng hàm eval để chạy đoạn code bằng String
+            eval(newCode);
+            // Xử lý việc render lại component bằng đoạn code viết trong giá trị attr
+            this.handleReRender(code);
+          });
         });
       }
 
@@ -85,22 +87,23 @@ const F8 = {
       addElementEvent() {
         // Lấy tất cả phần tử con
         Array.from(this.templateNode.children).forEach((child) => {
-          // Tìm xem phần tử con nào có thuộc tính bắt đầu bằng "v-on"
-          const childEventAttr = [...child.attributes].find((attribute) =>
-            attribute.name.startsWith('v-on')
-          );
-
-          // Sử dụng regex cắt ra các phần cần thiết
-          const regex = /v-on:(\w+)="(\w+.*?)"/;
-          // [0]: Toàn bộ định dạng, [1]: event, [2]: value(code)
-          const nodeAttr = `${childEventAttr?.nodeName}="${childEventAttr?.nodeValue}"`;
-          // Định dạng bên HTML
-          const match = nodeAttr.match(regex);
-          // Lấy ra mảng match
-          if (match) {
-            // Gọi hàm this.handleChange để thêm các sự kiện change
-            this.handleChange(child, match[1], match[2]);
-          }
+          // Lặp qua tất cả element, tìm thuộc tính
+          [...child.attributes].forEach((attribute) => {
+            // Tìm xem phần tử con nào có thuộc tính bắt đầu bằng "v-on"
+            if (attribute.name.startsWith('v-on')) {
+              // Sử dụng regex cắt ra các phần cần thiết
+              const regex = /v-on:(\w+)="(\w+.*?)"/;
+              // [0]: Toàn bộ định dạng, [1]: event, [2]: value(code)
+              const nodeAttr = `${attribute?.nodeName}="${attribute?.nodeValue}"`;
+              // Định dạng bên HTML
+              const match = nodeAttr.match(regex);
+              // Lấy ra mảng match
+              if (match) {
+                // Gọi hàm this.handleChange để thêm các sự kiện change
+                this.handleChange(child, match[1], match[2]);
+              }
+            }
+          });
         });
       }
 
