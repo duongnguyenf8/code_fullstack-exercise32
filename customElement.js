@@ -45,21 +45,15 @@ const F8 = {
         // Lặp qua this.state, lấy các key đã thay đổi dựa theo "code"
         Object.keys(this.state).forEach((key) => {
           // cộng chuỗi để thành key của nodeTexts
-          const elementState = null; /*...Code...*/
-
+          const elementState = 'element-' + code;
           // Nếu có một key giống với elementState => key của nodeTexts cần thay đổi
-          if (elementState.includes(key)) {
+          if (elementState.startsWith('element-' + key)) {
             // Xử lý chuỗi để cắt ra key của nodeTexts cần thiết
-
-            // Index elementState kết thúc của key
-            const positionKey = null; /*...Code...*/
-
-            // Từ đầu elementState cho tới index kết thúc của key
-            const dataNodeElements = null; /*...Code...*/
-
+            const positionKey = elementState.indexOf(key) + key.length;
+            const dataNodeElements = elementState.slice(0, positionKey);
             // Cập nhật tất cả nodeText liên quan
             this.nodeTexts[dataNodeElements].forEach((element) => {
-              element.textContent = null; /*...Code...*/
+              element.textContent = this.state[key];
             });
           }
         });
@@ -75,7 +69,7 @@ const F8 = {
         // Element, gán sự kiện
         element.addEventListener(event, () => {
           // Nối chuỗi với this.state để cập nhật lại state
-          const newCode = null; /*...Code...*/
+          const newCode = `this.state.${code}`;
 
           // sử dụng hàm eval để chạy đoạn code bằng String
           eval(newCode);
@@ -95,16 +89,14 @@ const F8 = {
           const childEventAttr = [...child.attributes].find((attribute) =>
             attribute.name.startsWith('v-on')
           );
-          // Sử dụng regex cắt ra các phần cần thiết
-          //  - [0]: Toàn bộ định dạng,
-          //  - [1]: event,
-          //  - [2]: value(code)
-          const regex = /v-on:(\w+)="(\w+.*?)"/;
-          // Định dạng bên HTML:=> nodeName="nodeValue"
-          const nodeAttr = null; /*...Code...*/
 
-          // Lấy ra mảng match
+          // Sử dụng regex cắt ra các phần cần thiết
+          const regex = /v-on:(\w+)="(\w+.*?)"/;
+          // [0]: Toàn bộ định dạng, [1]: event, [2]: value(code)
+          const nodeAttr = `${childEventAttr?.nodeName}="${childEventAttr?.nodeValue}"`;
+          // Định dạng bên HTML
           const match = nodeAttr.match(regex);
+          // Lấy ra mảng match
           if (match) {
             // Gọi hàm this.handleChange để thêm các sự kiện change
             this.handleChange(child, match[1], match[2]);
@@ -119,17 +111,16 @@ const F8 = {
       initialGetValue(value) {
         // regex để lấy ra state key
         const regex = new RegExp(`{{${value}}}`, 'gi');
-        // lấy ra các state key từ computedHTML match với regex
-        const match = null; /*...Code...*/
+        const match = this.computedHTML.match(regex);
 
         // Lặp qua các mẫu tìm thấy
         match?.forEach((cutRegex) => {
           Array.from(this.templateNode.children).forEach((child) => {
             if (child.innerHTML.includes(cutRegex)) {
-              // Tách các phần từ child đã match với regex:=> Phần state key
-              const parts = null; /*...Code...*/
-
+              // Tách các phần từ
+              const parts = child.innerHTML.split(cutRegex);
               const fragment = document.createDocumentFragment();
+
               // Lặp qua các phần tử đã tách
               parts.forEach((text, index) => {
                 fragment.appendChild(document.createTextNode(text));
@@ -159,16 +150,13 @@ const F8 = {
        * Được gọi khi component được kết nối vào DOM.
        */
       connectedCallback() {
-        // Xử lý innerHTML từ computedHTML vào thẻ template
-        this.templateNode.innerHTML = null; /*...Code...*/
-
-        // Clone templateNode, đưa lại vào templateNode để sử dụng
-        this.templateNode = null; /*...Code...*/
-
+        // Xử lý innerHTML vào thẻ template
+        this.templateNode.innerHTML = this.computedHTML;
+        // Clone template, đưa lại vào templateNode để sử dụng
+        this.templateNode = this.templateNode.content.cloneNode(true);
         // Xử lý lại templateNode để thay thế định dạng {{variable}}
         Object.keys(this.state).forEach((key) => this.initialGetValue(key));
         // Gọi hàm render để hiển thị
-
         this.render();
       }
 
