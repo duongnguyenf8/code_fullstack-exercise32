@@ -45,15 +45,15 @@ const F8 = {
         // Lặp qua this.state, lấy các key đã thay đổi dựa theo "code"
         Object.keys(this.state).forEach((key) => {
           // cộng chuỗi để thành key của nodeTexts với key giống của nodeTexts
-          const elementState = 'element-' + code;
+          const elementState = null; /*code...*/
           // Nếu có một key giống với elementState => key của nodeTexts cần thay đổi
           if (elementState.startsWith('element-' + key)) {
             // Xử lý chuỗi để cắt ra key của nodeTexts cần thiết
-            const positionKey = elementState.indexOf(key) + key.length;
-            const dataNodeElements = elementState.slice(0, positionKey);
+            const positionKey = null; /*code...*/
+            const dataNodeElements = null; /*code...*/
             // Cập nhật tất cả nodeText liên quan dựa theo value của state
             this.nodeTexts[dataNodeElements].forEach((element) => {
-              element.textContent = this.state[key];
+              element.textContent = null /*code...*/;
             });
           }
         });
@@ -65,15 +65,15 @@ const F8 = {
        * @param {string} event - Tên sự kiện
        * @param {string} code - Mã code
        */
-      handleChange(element, event, code) {
+        handleChange(element, event, code) {
         //   lấy ra các đoạn code cắt theo dấy ';' để lấy được nhiều đoạn code
-        const codes = code.split(';');
+        const codes = null; /*code...*/
         // Element, gán sự kiện
         element.addEventListener(event, () => {
           codes.forEach((code) => {
             code = code.trim();
             // Nối chuỗi với this.state để cập nhật lại state
-            const newCode = `this.state.${code};`;
+            const newCode = null; /*code...*/
             // sử dụng hàm eval để chạy đoạn code bằng String
             eval(newCode);
             // Xử lý việc render lại component bằng đoạn code viết trong giá trị attr
@@ -96,7 +96,7 @@ const F8 = {
               // [0]: Toàn bộ định dạng, [1]: event, [2]: value(code)
               const regex = /v-on:(\w+)="(\w+.*?)"/;
               // Định dạng bên HTML
-              const nodeAttr = `${attribute?.nodeName}="${attribute?.nodeValue}"`;
+              const nodeAttr = null; /*code...*/
               // Lấy ra mảng match
               const match = nodeAttr.match(regex);
               if (match) {
@@ -122,7 +122,7 @@ const F8 = {
           Array.from(this.templateNode.children).forEach((child) => {
             if (child.innerHTML.includes(cutRegex)) {
               // Tách các phần từ HTML theo regex
-              const parts = child.innerHTML.split(cutRegex);
+              const parts = null; /*code...*/
               const fragment = document.createDocumentFragment();
 
               // Lặp qua các phần tử đã tách
@@ -130,12 +130,10 @@ const F8 = {
                 fragment.appendChild(document.createTextNode(text));
                 if (index < parts.length - 1) {
                   // Tạo nút text và thêm vào fragment với giá trị là key của state
-                  const variableNode = document.createTextNode(
-                    this.state[value]
-                  );
+                  const variableNode = null; /*code...*/
                   // Cập nhật trạng thái, ghi các nodeText vào this.nodeTexts để xử lý re-render
                   if (!this.nodeTexts['element-' + value]) {
-                    this.nodeTexts['element-' + value] = [variableNode];
+                    this.nodeTexts['element-' + value] = null /*code...*/;
                   } else {
                     this.nodeTexts['element-' + value].push(variableNode);
                   }
@@ -155,9 +153,9 @@ const F8 = {
        */
       connectedCallback() {
         // Xử lý innerHTML vào thẻ template
-        this.templateNode.innerHTML = this.computedHTML;
+          this.templateNode.innerHTML = null /*code...*/;
         // Clone template, đưa lại vào templateNode để sử dụng
-        this.templateNode = this.templateNode.content.cloneNode(true);
+        this.templateNode = null /*code...*/;
         // Xử lý lại templateNode để thay thế định dạng {{variable}}
         Object.keys(this.state).forEach((key) => this.initialGetValue(key));
         // Gọi hàm render để hiển thị
